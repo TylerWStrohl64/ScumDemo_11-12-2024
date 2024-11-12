@@ -1,5 +1,6 @@
 # ScumDemo_11-12-2024
 [Use the 'ScumMain.java' class to run the program]
+--------------------------------------------------
 
 This repository was created to show a Demo/WIP Version of my project 'Scum', and to allow others to look at its code.
 
@@ -18,7 +19,7 @@ The Rules of Scum are:
 
 5 : The last player to play a card or pass starts the next round.
 
-6 : The first player of each round determines how many cards are played at a time (ex: the first player may lay down 2 cards with the same value at one time. then every player must play 2 cards or pass.
+6 : The first player of each round determines how many cards are played at a time (ex: the first player may lay down 2 cards with the same value at one time. then every player must play 2 cards or pass.)
 
 7 : Cards are Ranked with '2' as the lowest value, and 'Ace' as the highest value.
 
@@ -46,6 +47,10 @@ I chose Java to code this program in because of several Java features:
 ----------------------------------------------------------------------
 
 This program uses Scanner objects, Random objects, Arrays, ArrayLists, Stacks, and the data types string and int.
+
+I like how Java handles Scanners, ArrayLists, & Strings in particular. I have found them very crucial to the project.
+
+Java is an Object-Oriented Programming Language. Therefore, each class can be represented as an object. For example, I can represent each Card in the game as its own object.
 
   Scanners are used to scan user input, which are registered as strings and ints. 
   -------------------------------------------------------------------------------
