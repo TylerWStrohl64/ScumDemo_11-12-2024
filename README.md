@@ -74,7 +74,11 @@ All the possible card types/ranks and suits are stored in their own arrays.
   ArrayLists
   ----------
 
-The game's deck of cards is represented by an ArrayList of Cards.
+The game's deck of cards is represented by an ArrayList of Cards. Each player's hand is represented as their own smaller ArrayList of Cards.
+
+Each AI Opponent is stored in an ArrayList of AI.
+
+ArrayLists are more flexible than Arrays. For example, their size can change when elements are added/removed.
 
   Stacks
   ------
