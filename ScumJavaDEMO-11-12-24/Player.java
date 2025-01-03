@@ -45,7 +45,7 @@ public class Player {
 		// ^^^ this may be done in main.
 
 		//else play the card. removing the card before print will print the wrong card.
-		System.out.println("You have played the card: " + hand.get(cardIndex).toString());
+		System.out.println("\n" + "You have played the card: " + hand.get(cardIndex).toString());
 		hand.remove(cardIndex);
 	}
 	
