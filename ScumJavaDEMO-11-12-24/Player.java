@@ -4,8 +4,10 @@ public class Player {
 
 	//Variable Declarations
 	ArrayList<Card> hand;
+	//outStatus may not be needed?
 	boolean outStatus;
 	boolean passStatus;
+	//playedStatus may not be needed?
 	boolean playedStatus;
 	int heirarchy;
 	int numCardsToPlace;

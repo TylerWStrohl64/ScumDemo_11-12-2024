@@ -9,7 +9,7 @@ public class ScumMain {
 	
 	//NOTE: This is a Work-In-Progress build of the project. Code Segments will be changed in later builds.
 	//First   Build Created on: 11-12-2024.
-	//Current Build Created on: 01-02-2025.
+	//Current Build Created on: 01-04-2025.
 	//*******************************************************************************************
 	
 	/*
@@ -20,22 +20,25 @@ public class ScumMain {
 	 * AI Class
 	 * 		AI method/s & decisions.
 	 *
-	 * Use a Stack for the current stack of cards / card pile for that round.
-	 * 	keep track if a player layed down 2 of a card or 3 of a card or 1 of a card.
-	 * 	compare what is on the stack with the card the player wants to play, and compare the amount of that card.
+	 * Card Stack
+	 *  track if a player layed down 2 of a card or 3 of a card or 1 of a card. / play multiple cards.
 	 * 
-	 * There should be a boolean value for the player and each AI that gets flipped to true when they're out
+	 * Player Rotation
+	 *  There should be a boolean value for the player and each AI that gets flipped to true when they're out
 	 * 	that goes in the appropriate spot in the boolean array. game ends when all are flipped to true.
 	 * 
 	 * Passing & Rounds
-	 * 		end round when top of stack has ace/s
 	 * 		Player Rotation.
+	 * 
+	 * Finish a Game
 	 */
 	
 	/*
 	 * Bugs to fix:
+	 * ------------
 	 * 
 	 * Passing Issues & Rotation Issues
+	 * 		program sometimes crashes when passing in different scenarios.
 	 */
 	
 	
@@ -53,9 +56,15 @@ public class ScumMain {
 	public static int passCount = 0;
 	public static int numCardsToPlay;
 	
-	public static ArrayList<Boolean> playerRotation = new ArrayList<Boolean>(Arrays.asList(new Boolean[playerCount]));
+	//determines which players won & lost.
+	public static boolean[] totalHeirarchy;
+	public static int currentHeirarchy;
+	
+	//determines which player's turn it is, & how many players are left in the game.
+	public static ArrayList<Boolean> playerRotation = new ArrayList<Boolean>();
 	//index should correspond with index of the player (will be 0) & the indexes of ai (will be 1 to size - 1)
 	public static int playerRotationIndex = 0;
+	//determines which player starts a new round.
 	public static int startingRotationIndex = 0;
 	
 	//*********************************************************************************************************
@@ -78,12 +87,22 @@ public class ScumMain {
 	public static int setPlayerCount(Scanner sc) {
 		
 		System.out.print("How many Players? (Must be between 2 - 13 Players) ");
-		//int playerCount = sc.nextInt();
 		playerCount = sc.nextInt();
+		
+		//initialize size of playerRotation here to ensure correct size.
+		playerRotation = new ArrayList<Boolean>(Arrays.asList(new Boolean[playerCount]));
+		
+		for (int i = 1; i <= playerCount; i++) {
+			playerRotation.add(true);
+		}
+		
+		//is totalHeirarchy being used?
+		totalHeirarchy = new boolean [playerCount];
 		
 		return playerCount;
 	}
 	
+	//***************[Most Frequently Used Method]***************
 	//scanner is passed as parameter to close it in main. program crashes when scanner is declared & closed in this method.
 	public static void showMenuOptions(Scanner menScan) {
 		
@@ -152,9 +171,9 @@ public class ScumMain {
 						//like in the real card game, this would be on the top of the stack of cards.
 						cardStack.push(cardToPush);
 						//test that the stack size is correct:
-						System.out.println(cardStack.size());
+						//System.out.println(cardStack.size());
 
-						System.out.println("\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
+						System.out.println("\n" + "\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
 						thePlayer.setPlayedStatus(true);
 					}
 					//check other rules if stack is not empty:
@@ -173,7 +192,7 @@ public class ScumMain {
 							//like in the real card game, this would be on the top of the stack of cards.
 							cardStack.push(cardToPush);
 
-							System.out.println("\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
+							System.out.println("\n" + "\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
 							thePlayer.setPlayedStatus(true);
 						}
 						else {
@@ -248,36 +267,61 @@ public class ScumMain {
 		//An AI cannot choose options H |OR| T
 		
 		
-		//Determine card before anything else. This ensures we have the correct card in the hand and stack.
-		Random rand = new Random();
-		int cardIndex = rand.nextInt(currentOP.getHand().size());
-		Card cardToPush = currentOP.getHand().get(cardIndex);
 		
-		//play a card if the stack is empty.
-		if (cardStack.size() == 0) {
-			currentOP.playCard(cardIndex);
-			startingRotationIndex = playerRotationIndex;
+		//this may not work if stuff is removed from aiPlayers or playerRotation ???
+		if ((currentOP.getHand().size() == 0)) {
 			
-			//like in the real card game, this would be on the top of the stack of cards.
-			cardStack.push(cardToPush);
-			
-			System.out.println("\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
+			//passing again after this statement will result in an infinite loop or crashing.
+			//System.out.println(currentOP.getName() + " is already out!");
+			passCount++;
 		}
-		//we'll just have them all pass for now.
 		else {
+			//Determine card before anything else. This ensures we have the correct card in the hand and stack.
+			Random rand = new Random();
+			int cardIndex = rand.nextInt(currentOP.getHand().size());
+			Card cardToPush = currentOP.getHand().get(cardIndex);
 			
-			if ((passCount < playerCount) && (currentOP.getPassedStatus() == false)) {
-				currentOP.setPassedStatus(true);
-				passCount++;
+			//play a card if the stack is empty.
+			if (cardStack.size() == 0) {
+				currentOP.playCard(cardIndex);
+				startingRotationIndex = playerRotationIndex;
 				
-				System.out.println(currentOP.getName() + " has passed.");
+				//like in the real card game, this would be on the top of the stack of cards.
+				cardStack.push(cardToPush);
+				
+				System.out.println("\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
+				
+				
+				if (currentOP.getHand().size() == 0) {
+					
+					currentOP.setOutStatus(true);
+					System.out.println(currentOP.getName() + " is out! Current Heirarchy: " + currentHeirarchy);
+					totalHeirarchy[currentHeirarchy] = true;
+					currentOP.setHeirarchy(currentHeirarchy);
+					currentHeirarchy++;
+					passCount++;
+					
+					//statement needs to be re-done. index out of bounds exception. indexes dont line up.
+					playerRotation.remove(aiPlayers.indexOf(currentOP));
+				}
+				
+			}
+			//[for now] all AI will pass if a card is already on the stack.
+			else {
+				
+				if ((passCount < playerCount) && (currentOP.getPassedStatus() == false)) {
+					currentOP.setPassedStatus(true);
+					passCount++;
+					
+					System.out.println(currentOP.getName() + " has passed.");
+				}
 			}
 		}
 		playerRotationIndex++;
 	}
 	
 	//how will passing work?
-	public static void newRound(Card prevTopCard) {
+	public static void newRound() {
 		
 		passCount = 0;
 		cardStack.clear();
@@ -288,15 +332,8 @@ public class ScumMain {
 			AI currentOP = aiPlayers.get(i);
 			currentOP.setPassedStatus(false);
 		}
-		
-		//determine who starts the next round.
-		//System.out.println("prevTopCard: " + prevTopCard.toString());
-		//create a player rotation to know who went last. might not need "prevTopCard"
-		
 		//the current index of the player rotation should determine the player who went last and start with that player.
-		//playerRotationIndex--;
 		playerRotationIndex = startingRotationIndex;
-		//playerRotationIndex = 1;
 		
 		System.out.println("A new round has begun.");
 	}
@@ -364,19 +401,14 @@ public class ScumMain {
 			AI currentOP = aiPlayers.get(i);
 			currentOP.setHand(gameDeck, cardCount);
 		}
-		
-		boolean [] totalHeirarchy = new boolean [playerCount];
 
 		//how should the current index in the playerRotation be determined?
 			//how can it be used to determine the current player?
 		playerRotationIndex = 0;
-		
-		for (int i = 1; i <= playerCount; i++) {
-			playerRotation.add(true);
-		}
 
 		//increment when a player wins.
-		int currentHeirarchy = 0;
+		//int currentHeirarchy = 0;
+		currentHeirarchy = 0;
 		int playerHeirarchy = 0;
 		
 		//*******************************************************************************
@@ -388,13 +420,15 @@ public class ScumMain {
 				//inner loop runs first, and runs until human player (you) runs out of cards.
 				while (thePlayer.getHand().size() != 0) {
 					
+					//Player's Turn:
 					if ((playerRotationIndex == 0) && (thePlayer.getPassedStatus() == false)) {
 						showMenuOptions(sc);
 						
 						//TESTING
-						System.out.println("playerRotationIndex: " + playerRotationIndex);
+						//System.out.println("playerRotationIndex: " + playerRotationIndex);
 						//TESTING
 					}
+					//AI Turn/s: [will need to copy this outside of inner loop too.] this could maybe be re-done in aiActions?
 					else {
 						//call other method/s so that the AI players take their turn.
 						//if player pushes onto stack or passes, then next player can go. <<<-------
@@ -409,22 +443,15 @@ public class ScumMain {
 								//needs to be changed.
 								AI currentOP = aiPlayers.get(i);
 								
-								//given the size of the loop this should work. if the above statement is correct.
-								if (currentOP.getHand().size() == 0) {
-									
-									currentOP.setOutStatus(true);
-									playerRotation.remove(aiPlayers.indexOf(currentOP));
-								}
-								else {
-									aiActions(sc, currentOP);
-								}
+								aiActions(sc, currentOP);
 								
+								//does this if statement still have a purpose?
 								if (i == (aiPlayers.size() - 1)) {
 									thePlayer.setPlayedStatus(false);
 								}
 								
 								//TESTING
-								System.out.println("playerRotationIndex: " + playerRotationIndex);
+								//System.out.println("playerRotationIndex: " + playerRotationIndex);
 								//TESTING
 								
 							}
@@ -432,24 +459,18 @@ public class ScumMain {
 							if (playerRotationIndex >= playerRotation.size()) {
 								
 								playerRotationIndex = 0;
-								//playerRotationIndex = startingRotationIndex;
 							}
 					}
-						
-					
-					//if (passCount == notOut.size()) {
-						//newRound();
-					//}
 					if (cardStack.size() != 0)
 					{
 						//(size - 1) since indexes start at 0.
 						Card topCard = cardStack.get(cardStack.size() - 1);
 						if ((passCount >= playerCount) || (topCard.getType().equals("Ace"))) {
-							newRound(topCard);
+							newRound();
 						}
-						//newRound();
 					}
 				}
+				//end of inner loop.
 				
 				//*******************************************************************************
 				//rest of code is triggered after the player runs out of cards:
@@ -467,6 +488,7 @@ public class ScumMain {
 				
 				//*******************************************************************************
 				//TESTS FOR ABOVE STATEMENTS
+				System.out.println("[TESTING] Player (You) have played your last card. The game has ended.");
 				System.out.println(currentHeirarchy);
 				System.out.println(playerHeirarchy);
 				System.out.println(totalHeirarchy[playerHeirarchy]);
@@ -474,7 +496,7 @@ public class ScumMain {
 				
 				
 				//*******************************************************************************
-				//FOR TESTING PURPOSES [it terminates the program after the player is out]
+				//FOR TESTING PURPOSES [it terminates the program after the player is out].
 				totalHeirarchy[playerCount - 1] = true;
 				//*******************************************************************************
 		}
