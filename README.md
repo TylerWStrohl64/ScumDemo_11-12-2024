@@ -6,30 +6,25 @@ This repository was created to show a Demo/WIP Version of my project 'Scum', and
 
 This project 'Scum' is a Text-Based Recreation of the card game with the same name. It is coded in Java.
 
-The Rules of Scum are:
-----------------------
+The [Implemented] Rules of Scum are:
+------------------------------------
 
-1 : The player with the '2' of 'Clubs' card starts the game.
+1 : Cards are Ranked with '2' as the lowest value, and 'Ace' as the highest value.
 
-2 : You must pass if you cannot play any cards in the current round.
+2 : You must play a card with a higher value than the card on the top of the stack. (ex: a '3' cannot be played if a 'King' is on top of the stack.)
 
-3 : If a player passes in the current round, they cannot play another card until the next round.
+3 : You must pass if you cannot play any card in the current round.
 
-4 : The round ends either when the last player plays an 'Ace' card, |OR| every player passes.
+4 : If a player passes in the current round, they cannot play another card until the next round.
 
-5 : The last player to play a card or pass starts the next round.
+5 : The round ends either when the last player plays an 'Ace' card, |OR| every player passes.
 
-6 : The first player of each round determines how many cards are played at a time (ex: the first player may lay down 2 cards with the same value at one time. then every player must play 2 cards or pass.)
+6 : The last player to play a card or pass starts the next round.
 
-7 : Cards are Ranked with '2' as the lowest value, and 'Ace' as the highest value.
+7 : The first player to get rid of all their cards is the 'Emporer' of the game (1st Place / Winner).
 
-8 : You must play card/s with a higher value than the card/s on the top of the stack. If you play multiple cards, they must all be the same value (ex: 6)
-
-9 : The first player to get rid of all their cards is the 'Emporer' of the game.
-
-10: The last player to get rid of all their cards is the 'Scum' of the game.
-
-11: At the start of a new game (not round) the 'Scum' must give the 'Emporer' their 2 highest value cards. The 'Emporer' gives the 'Scum' their 2 lowest value cards.
+8 : The last player to get rid of all their cards is the 'Scum' of the game (Last Place / Loser).
+		
 
 
 Inspiration:
@@ -70,6 +65,8 @@ They are used to randomly assign names to each AI Opponent, so that each AI Oppo
   ------
 
 All the possible card types/ranks and suits are stored in their own arrays.
+
+Player Rotation [determines which players are still in the game] uses an Array of Boolean values.
 
   ArrayLists
   ----------
