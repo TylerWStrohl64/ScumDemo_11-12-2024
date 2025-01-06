@@ -2,14 +2,16 @@ import java.util.ArrayList;
 import java.util.Random;
 public class AI {
 
-	//Variable Declarations
+	//Variable Declarations:
+	//----------------------
+	
 	private String name;
 	private ArrayList<Card> hand;
 	private boolean outStatus;
 	private boolean passStatus;
-	private int heirarchy;
+	private int hierarchy;
 	
-	//Constructor
+	//Constructor:
 	public AI(String name) {
 		
 		this.name = name;
@@ -20,7 +22,6 @@ public class AI {
 	
 	//*************************************************************************************************************
 	
-	//identical to player class version, just called after it.
 	public void setHand(ArrayList<Card> deck, int cardCount) {
 		
 		for (int i = 1; i <= cardCount; i++) {
@@ -32,7 +33,6 @@ public class AI {
 		}
 	}
 	
-	//see player class for additional comments.
 	public void playCard(int cardIndex) {
 
 		System.out.println(name + " has played the card: " + hand.get(cardIndex).toString());
@@ -69,13 +69,13 @@ public class AI {
 		outStatus = AIOutStatus;
 	}
 	
-	public void setHeirarchy(int AIHeirarchy) {
+	public void setHierarchy(int AIHierarchy) {
 		
-		heirarchy = AIHeirarchy;
+		hierarchy = AIHierarchy;
 	}
 	
 	public int getHeirarchy() {
 		
-		return heirarchy;
+		return hierarchy;
 	}
 }

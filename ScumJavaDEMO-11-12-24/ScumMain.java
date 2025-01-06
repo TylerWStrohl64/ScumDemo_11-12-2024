@@ -9,7 +9,7 @@ public class ScumMain {
 	
 	//NOTE: This is a Work-In-Progress build of the project. Code Segments will be changed in later builds.
 	//First   Build Created on: 11-12-2024.
-	//Current Build Created on: 01-04-2025.
+	//Current Build Created on: 01-05-2025.
 	//*******************************************************************************************
 	
 	/*
@@ -21,7 +21,7 @@ public class ScumMain {
 	 * 		AI method/s & decisions.
 	 *
 	 * Card Stack
-	 *  track if a player layed down 2 of a card or 3 of a card or 1 of a card. / play multiple cards.
+	 *  Track if a player layed down 2 of a card or 3 of a card or 1 of a card. / play multiple cards.
 	 * 
 	 * Player Rotation
 	 *  There should be a boolean value for the player and each AI that gets flipped to true when they're out
@@ -57,8 +57,8 @@ public class ScumMain {
 	public static int numCardsToPlay;
 	
 	//determines which players won & lost.
-	public static boolean[] totalHeirarchy;
-	public static int currentHeirarchy;
+	public static boolean[] totalHierarchy;
+	public static int currentHierarchy;
 	
 	//determines which player's turn it is, & how many players are left in the game.
 	public static ArrayList<Boolean> playerRotation = new ArrayList<Boolean>();
@@ -74,7 +74,7 @@ public class ScumMain {
 		
 		ArrayList<Card> deck = new ArrayList<Card>();
 		
-		//set to 53 to avoid an index out of bounds exception.
+		//53 - 1 = 52 cards.
 		for (int i = 1; i <= 53; i++) {
 			Card aCard = new Card();
 			aCard.assign();
@@ -83,7 +83,7 @@ public class ScumMain {
 		return deck;
 	}
 	
-	//seperate method to prevent program from crashing on an invalid player count.
+	//separate method to prevent program from crashing on an invalid player count.
 	public static int setPlayerCount(Scanner sc) {
 		
 		System.out.print("How many Players? (Must be between 2 - 13 Players) ");
@@ -96,8 +96,7 @@ public class ScumMain {
 			playerRotation.add(true);
 		}
 		
-		//is totalHeirarchy being used?
-		totalHeirarchy = new boolean [playerCount];
+		totalHierarchy = new boolean [playerCount];
 		
 		return playerCount;
 	}
@@ -136,16 +135,14 @@ public class ScumMain {
 			//Which Card is Being Played:
 			//*************************************************************************************************************************
 			System.out.println("Which Card would you like to play?");
-			//call the same hand method from above.
 			showHand(thePlayer.getHand());
 			
 			System.out.println("(Enter the Number/Index of the Card you would like to play (shown on left. ex: 0)");
-			//int numCard = menScan.nextInt();
 			//numCard is initialized at 0 before changing.
 			int numCard = 0;
 			
 			//*************************************************************************************************************************
-			//Check if Input is Valid: 		[Recurse if Input is Invalid]
+			//Check if Input is Valid: 		[Method is called again in main if Input is Invalid]
 			
 			
 			//check prevents crashing.
@@ -168,13 +165,11 @@ public class ScumMain {
 						thePlayer.playCard(numCard);
 						startingRotationIndex = playerRotationIndex;
 						playerRotationIndex++;
+						
 						//like in the real card game, this would be on the top of the stack of cards.
 						cardStack.push(cardToPush);
-						//test that the stack size is correct:
-						//System.out.println(cardStack.size());
 
 						System.out.println("\n" + "\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
-						thePlayer.setPlayedStatus(true);
 					}
 					//check other rules if stack is not empty:
 					else {
@@ -193,7 +188,6 @@ public class ScumMain {
 							cardStack.push(cardToPush);
 
 							System.out.println("\n" + "\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
-							thePlayer.setPlayedStatus(true);
 						}
 						else {
 							System.out.println("Your card/s cannot be played. Choose different card/s |OR| Pass.");
@@ -231,25 +225,24 @@ public class ScumMain {
 		}
 		System.out.println();
 	}
+		//*************************************************************************************************************************
 	
 	public static void showRules() {
 		
-		System.out.println("These are the Rules of Scum: ");
-		System.out.println("----------------------------");
+		System.out.println("These are the [Implemented] Rules of Scum: ");
+		System.out.println("------------------------------------------");
 		
-		System.out.println("1 : The player with the '2' of 'Clubs' card starts the game." + "\n");
-		System.out.println("2 : You must pass if you cannot play any cards in the current round." + "\n");
-		System.out.println("3 : If a player passes in the current round, they cannot play another card until the next round." + "\n");
-		System.out.println("4 : The round ends either when the last player plays an 'Ace' card, |OR| every player passes." + "\n");
-		System.out.println("5 : The last player to play a card or pass starts the next round." + "\n");
-		System.out.println("6 : The first player of each round determines how many cards are played at a time (ex: the first player may lay down 2 cards with the same value at one time. then every player must play 2 cards or pass." + "\n");
-		System.out.println("7 : Cards are Ranked with '2' as the lowest value, and 'Ace' as the highest value." + "\n");
-		System.out.println("8 : You must play card/s with a higher value than the card/s on the top of the stack. If you play multiple cards, they must all be the same value (ex: 6)" + "\n");
-		System.out.println("9 : The first player to get rid of all their cards is the 'Emporer' of the game." + "\n");
-		System.out.println("10: The last player to get rid of all their cards is the 'Scum' of the game." + "\n");
-		System.out.println("11: At the start of a new game (not round) the 'Scum' must give the 'Emporer' their 2 highest value cards. The 'Emporer' gives the 'Scum' their 2 lowest value cards." + "\n");
+		System.out.println("1 : Cards are Ranked with '2' as the lowest value, and 'Ace' as the highest value." + "\n");
+		System.out.println("2 : You must play a card with a higher value than the card on the top of the stack. (ex: a '3' cannot be played if a 'King' is on top of the stack.)" + "\n");
+		System.out.println("3 : You must pass if you cannot play any card in the current round." + "\n");
+		System.out.println("4 : If a player passes in the current round, they cannot play another card until the next round." + "\n");
+		System.out.println("5 : The round ends either when the last player plays an 'Ace' card, |OR| every player passes." + "\n");
+		System.out.println("6 : The last player to play a card or pass starts the next round." + "\n");
+		System.out.println("7 : The first player to get rid of all their cards is the 'Emporer' of the game (1st Place / Winner)." + "\n");
+		System.out.println("8 : The last player to get rid of all their cards is the 'Scum' of the game (Last Place / Loser)." + "\n");
 		
-		System.out.println("---------------------------------------------------");
+		System.out.println("\n" + "\t" + "(Read the Rules again by pressing the 'R' menu option when prompted.)");
+		System.out.println("----------------------------------------------------------------------------------");
 	}
 	
 	public static void showHand(ArrayList<Card> hand) {
@@ -261,20 +254,16 @@ public class ScumMain {
 		System.out.println("---------------------------------------------------");
 	}
 	
-	//determine how each AI Opponent will play the game.
+	//Determine how each AI Opponent will play the game.
+	//For the time being, the AI will either: [play a random card] |OR| [pass if a card is on the stack]
 	public static void aiActions(Scanner sc, AI currentOP) {
 		
-		//An AI cannot choose options H |OR| T
-		
-		
-		
-		//this may not work if stuff is removed from aiPlayers or playerRotation ???
+		//fall into this if statement if the opponent is already out:
 		if ((currentOP.getHand().size() == 0)) {
 			
-			//passing again after this statement will result in an infinite loop or crashing.
-			//System.out.println(currentOP.getName() + " is already out!");
 			passCount++;
 		}
+		//fall into this else statement if the opponent is not out:
 		else {
 			//Determine card before anything else. This ensures we have the correct card in the hand and stack.
 			Random rand = new Random();
@@ -291,17 +280,17 @@ public class ScumMain {
 				
 				System.out.println("\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
 				
-				
+				//fall into nested if statement if the card played is the opponent's last card.
 				if (currentOP.getHand().size() == 0) {
 					
 					currentOP.setOutStatus(true);
-					System.out.println(currentOP.getName() + " is out! Current Heirarchy: " + currentHeirarchy);
-					totalHeirarchy[currentHeirarchy] = true;
-					currentOP.setHeirarchy(currentHeirarchy);
-					currentHeirarchy++;
+					System.out.println(currentOP.getName() + " is out! Current Hierarchy: " + currentHierarchy);
+					totalHierarchy[currentHierarchy] = true;
+					currentOP.setHierarchy(currentHierarchy);
+					currentHierarchy++;
 					passCount++;
 					
-					//statement needs to be re-done. index out of bounds exception. indexes dont line up.
+					//statement may have to change if player rotation indexes change.
 					playerRotation.remove(aiPlayers.indexOf(currentOP));
 				}
 				
@@ -320,7 +309,7 @@ public class ScumMain {
 		playerRotationIndex++;
 	}
 	
-	//how will passing work?
+	//called at the start of a new round (either all players pass |OR| an ACE card is played).
 	public static void newRound() {
 		
 		passCount = 0;
@@ -379,7 +368,7 @@ public class ScumMain {
 			//Assign random name to AI Player & add it to the ArrayList of AI Players/Opponents.
 			Random randName = new Random();
 			int randIndex = randName.nextInt(listAINames.size());
-			//String aiName = aiNames[randIndex];
+
 			String aiName = listAINames.get(randIndex);
 			AI opponent = new AI(aiName);
 			aiPlayers.add(opponent);
@@ -402,58 +391,37 @@ public class ScumMain {
 			currentOP.setHand(gameDeck, cardCount);
 		}
 
-		//how should the current index in the playerRotation be determined?
-			//how can it be used to determine the current player?
+		//temporarily, the player (you) will start the game.
 		playerRotationIndex = 0;
 
 		//increment when a player wins.
-		//int currentHeirarchy = 0;
-		currentHeirarchy = 0;
-		int playerHeirarchy = 0;
+		currentHierarchy = 0;
+		int playerHierarchy = 0;
 		
 		//*******************************************************************************
 		//End Of Setup.
 		
 		
 			//outer loop runs until every player runs out of cards.
-			while (totalHeirarchy[playerCount - 1] != true) {
+			while (totalHierarchy[playerCount - 1] != true) {
 				//inner loop runs first, and runs until human player (you) runs out of cards.
 				while (thePlayer.getHand().size() != 0) {
 					
 					//Player's Turn:
 					if ((playerRotationIndex == 0) && (thePlayer.getPassedStatus() == false)) {
 						showMenuOptions(sc);
-						
-						//TESTING
-						//System.out.println("playerRotationIndex: " + playerRotationIndex);
-						//TESTING
 					}
 					//AI Turn/s: [will need to copy this outside of inner loop too.] this could maybe be re-done in aiActions?
 					else {
-						//call other method/s so that the AI players take their turn.
-						//if player pushes onto stack or passes, then next player can go. <<<-------
-							//compare size of stack if player pushes onto stack
-						
+						//call aiActions Method so that the AI players take their turn.
 						
 							//may have to change this loop when order is determined.
 							for (int i = 0; i < aiPlayers.size(); i++) {
-								
-								//playerRotationIndex++;
 								
 								//needs to be changed.
 								AI currentOP = aiPlayers.get(i);
 								
 								aiActions(sc, currentOP);
-								
-								//does this if statement still have a purpose?
-								if (i == (aiPlayers.size() - 1)) {
-									thePlayer.setPlayedStatus(false);
-								}
-								
-								//TESTING
-								//System.out.println("playerRotationIndex: " + playerRotationIndex);
-								//TESTING
-								
 							}
 						
 							if (playerRotationIndex >= playerRotation.size()) {
@@ -473,36 +441,35 @@ public class ScumMain {
 				//end of inner loop.
 				
 				//*******************************************************************************
-				//rest of code is triggered after the player runs out of cards:
+				//Remaining code is triggered after the player runs out of cards:
 				
 				//some of these should only happen once.
 				thePlayer.setOutStatus(true);	
 				System.out.println(thePlayer.getOutStatus());
 					
-				playerHeirarchy = currentHeirarchy;
-				thePlayer.setHeirarchy(playerHeirarchy);
-				totalHeirarchy[playerHeirarchy] = true;
+				playerHierarchy = currentHierarchy;
+				thePlayer.setHierarchy(playerHierarchy);
+				totalHierarchy[playerHierarchy] = true;
 				
-				//what index is the player at in the player rotation?
-				playerRotation.remove(playerHeirarchy);
+				playerRotation.remove(playerHierarchy);
 				
 				//*******************************************************************************
 				//TESTS FOR ABOVE STATEMENTS
 				System.out.println("[TESTING] Player (You) have played your last card. The game has ended.");
-				System.out.println(currentHeirarchy);
-				System.out.println(playerHeirarchy);
-				System.out.println(totalHeirarchy[playerHeirarchy]);
+				System.out.println(currentHierarchy);
+				System.out.println(playerHierarchy);
+				System.out.println(totalHierarchy[playerHierarchy]);
 				//*******************************************************************************
 				
 				
 				//*******************************************************************************
 				//FOR TESTING PURPOSES [it terminates the program after the player is out].
-				totalHeirarchy[playerCount - 1] = true;
+				totalHierarchy[playerCount - 1] = true;
 				//*******************************************************************************
 		}
 		
-		//print results. (will need to increment heirarchy by 1 when printed)
-		//if the heirarchy is (0) than that is [emporer]. if the heirarchy is (size - 1) then thats [scum].
+		//print results.
+		//if the hierarchy is (0) than that is [emperor]. if the hierarchy is (size - 1) then thats [scum].
 		
 		sc.close();
 	}

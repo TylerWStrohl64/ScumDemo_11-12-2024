@@ -2,23 +2,21 @@ import java.util.ArrayList;
 import java.util.Random;
 public class Player {
 
-	//Variable Declarations
+	//Variable Declarations:
+	//----------------------
+	
 	ArrayList<Card> hand;
-	//outStatus may not be needed?
 	boolean outStatus;
 	boolean passStatus;
-	//playedStatus may not be needed?
-	boolean playedStatus;
-	int heirarchy;
+	int hierarchy;
 	int numCardsToPlace;
 	
-	//Constructor
+	//Constructor:
 	public Player() {
 		
 		hand = new ArrayList<Card>();
 		outStatus = false;
 		passStatus = false;
-		playedStatus = false;
 	}
 	
 	//*************************************************************************************************************
@@ -40,25 +38,9 @@ public class Player {
 	}
 	
 	public void playCard(int cardIndex) {
-		
-		//check if the card can be played:
-		//if (ai card rank)   >  (player card rank) then card cannot be played.
-		//if (numCardsPlaced) != (numCardsToPlace ) then card cannot be played.
-		// ^^^ this may be done in main.
 
-		//else play the card. removing the card before print will print the wrong card.
 		System.out.println("\n" + "You have played the card: " + hand.get(cardIndex).toString());
 		hand.remove(cardIndex);
-	}
-	
-	public boolean getPlayedStatus() {
-		
-		return playedStatus;
-	}
-	
-	public void setPlayedStatus(boolean playerPlayStatus) {
-		
-		playedStatus = playerPlayStatus;
 	}
 	
 	public boolean getPassedStatus() {
@@ -81,13 +63,13 @@ public class Player {
 		outStatus = playerOutStatus;
 	}
 	
-	public void setHeirarchy(int playerHeirarchy) {
+	public void setHierarchy(int playerHierarchy) {
 		
-		heirarchy = playerHeirarchy;
+		hierarchy = playerHierarchy;
 	}
 	
-	public int getHeirarchy() {
+	public int getHierarchy() {
 		
-		return heirarchy;
+		return hierarchy;
 	}
 }
