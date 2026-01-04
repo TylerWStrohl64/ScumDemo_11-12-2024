@@ -9,7 +9,7 @@ public class ScumMain {
 	
 	//NOTE: This is a Work-In-Progress build of the project. Code Segments will be changed in later builds.
 	//First   Build Created on: 11-12-2024.
-	//Current Build Created on: 01-05-2025.
+	//Current Build Created on: 01-04-2026.
 	//*******************************************************************************************
 	
 	/*
@@ -74,12 +74,33 @@ public class ScumMain {
 		
 		ArrayList<Card> deck = new ArrayList<Card>();
 		
-		//53 - 1 = 52 cards.
-		for (int i = 1; i <= 53; i++) {
-			Card aCard = new Card();
-			aCard.assign();
-			deck.add(aCard);
+		//new card distribution method (accurate to real 52 card deck, instead of randomized).
+		//there are 13 types of cards.
+		for (int ctIndex = 0; ctIndex < 13; ctIndex++) {
+			
+			//4 suits:
+			for (int suitIndex = 0; suitIndex < 4; suitIndex++) {
+				
+				Card aCard = new Card();
+				
+				String type = aCard.types[ctIndex];
+				String suit = aCard.suits[suitIndex];
+				int rank = aCard.ranks[ctIndex];
+				
+				aCard.assign(type, suit, rank);
+				deck.add(aCard);
+			}
 		}
+		
+		//**************************************
+		//TESTING:
+//		System.out.println("TESTING makeCardDeck() FUNCTION");
+//
+//		for (int i = 0; i < 52; i++) {
+//			Card currentCard = deck.get(i);
+//			System.out.println(i + ":" + currentCard.toString());
+//		}
+		//**************************************
 		return deck;
 	}
 	
@@ -89,14 +110,17 @@ public class ScumMain {
 		System.out.print("How many Players? (Must be between 2 - 13 Players) ");
 		playerCount = sc.nextInt();
 		
-		//initialize size of playerRotation here to ensure correct size.
-		playerRotation = new ArrayList<Boolean>(Arrays.asList(new Boolean[playerCount]));
-		
-		for (int i = 1; i <= playerCount; i++) {
-			playerRotation.add(true);
+		if ((playerCount >= 2) && (playerCount <= 13)) {
+			
+			//initialize size of playerRotation here to ensure correct size.
+			playerRotation = new ArrayList<Boolean>(Arrays.asList(new Boolean[playerCount]));
+			
+			for (int i = 1; i <= playerCount; i++) {
+				playerRotation.add(true);
+			}
+			
+			totalHierarchy = new boolean [playerCount];
 		}
-		
-		totalHierarchy = new boolean [playerCount];
 		
 		return playerCount;
 	}
@@ -247,7 +271,7 @@ public class ScumMain {
 	
 	public static void showHand(ArrayList<Card> hand) {
 		
-		hand = thePlayer.getHand();
+		hand = thePlayer.getHand(); //this line may be redundant. or just dont use as param. player is static global.
 		for (int i = 0; i < hand.size(); i++) {
 			System.out.println(i + hand.get(i).toString());
 		}
@@ -324,7 +348,7 @@ public class ScumMain {
 		//the current index of the player rotation should determine the player who went last and start with that player.
 		playerRotationIndex = startingRotationIndex;
 		
-		System.out.println("A new round has begun.");
+		System.out.println("A new round has begun." + "\n");
 	}
 	
 	//Main:
@@ -360,7 +384,7 @@ public class ScumMain {
 		}
 		
 		//create an AI object for every AI player needed.
-		String [] aiNames = {"Tyler", "Ashton", "Hailey", "Sara", "Chayse", "Chad", "Brad", "Steve", "Kevin", "Jack", "Kyle", "Aiden", "Austin", "Dan", "Michael", "Chris", "Susan", "Jessica"};
+		String [] aiNames = {"Mario", "Luigi", "Wario", "Waluigi", "DK", "Yoshi", "Bowser", "Toad", "Peach", "Daisy", "King Boo", "Shy Guy", "Dry Bones", "Goomba", "Koopa Troopa", "Rosalina", "Bowser Jr.", "Hammer Bro", "Kamek"};
 		ArrayList<String> listAINames = new ArrayList<String>(Arrays.asList(aiNames));
 		
 		for (int i = 1; i <= (playerCount - 1); i++) {

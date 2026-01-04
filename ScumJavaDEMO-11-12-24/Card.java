@@ -10,9 +10,9 @@ public class Card {
 	private String suit;
 	private int rank;
 	
-	private final String [] types = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"};
-	private final String [] suits = {"Clubs", "Spades", "Hearts", "Diamonds"};
-	private final int [] ranks = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+	public final String [] types = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"};
+	public final String [] suits = {"Clubs", "Spades", "Hearts", "Diamonds"};
+	public final int [] ranks = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
 	
 	//Default Card:
 	public Card () {
@@ -22,27 +22,24 @@ public class Card {
 		rank = ranks[0];
 	}
 	
-	//Preassigned Values Card:
-	public Card (String type, String suit, int rank) {
-		
-		this.type = type;
-		this.suit = suit;
-		this.rank = rank;
-	}
 	
 	//*************************************************************************************************************
 	
 	//Randomize Card Values
-	public void assign() {
+	public void assign(String type, String suit, int rank) {
 		
-		Random randTR = new Random();
-		int trIndex = randTR.nextInt(ranks.length);
-		type = types[trIndex];
-		rank = ranks[trIndex];
+//		Random randTR = new Random();
+//		int trIndex = randTR.nextInt(ranks.length);
+//		type = types[trIndex];
+//		rank = ranks[trIndex];
+//		
+//		Random randSuit = new Random();
+//		int stIndex = randSuit.nextInt(suits.length);
+//		suit = suits[stIndex];
 		
-		Random randSuit = new Random();
-		int stIndex = randSuit.nextInt(suits.length);
-		suit = suits[stIndex];
+		this.type = type;
+		this.suit = suit;
+		this.rank = rank;
 	}
 	
 	public String getType() {
