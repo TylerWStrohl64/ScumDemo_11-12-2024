@@ -16,29 +16,23 @@ public class ScumMain {
 	 * Ideas left to implement:
 	 * ------------------------
 	 * 
-	 * Player Class
-	 * AI Class
-	 * 		AI method/s & decisions.
+	 * + GUI Adaptation [BONUS]
+	 * 
+	 * + AI Decision-Making
+	 * 		- Improved card choices.
+	 * 		- Playing multiple cards.
 	 *
-	 * Card Stack
-	 *  Track if a player layed down 2 of a card or 3 of a card or 1 of a card. / play multiple cards.
+	 * + Card Stack
+	 *  	- Track if a player layed down 2 of a card or 3 of a card or 1 of a card. / play multiple cards.
 	 * 
-	 * Player Rotation
-	 *  There should be a boolean value for the player and each AI that gets flipped to true when they're out
-	 * 	that goes in the appropriate spot in the boolean array. game ends when all are flipped to true.
+	 * + Finish a Game
 	 * 
-	 * Passing & Rounds
-	 * 		Player Rotation.
-	 * 
-	 * Finish a Game
 	 */
 	
 	/*
 	 * Bugs to fix:
 	 * ------------
 	 * 
-	 * Passing Issues & Rotation Issues
-	 * 		program sometimes crashes when passing in different scenarios.
 	 */
 	
 	
@@ -47,24 +41,23 @@ public class ScumMain {
 	
 	public static Player thePlayer = new Player();
 	
-	//empties each round.
+	//empties each round. top card frequently read to determine legal moves.
 	public static Stack<Card> cardStack = new Stack<Card>();
 	
 	public static ArrayList<AI> aiPlayers = new ArrayList<AI>();
 	
 	public static int playerCount;
 	public static int passCount = 0;
+	//how many cards the current player/ai will play in their turn.
 	public static int numCardsToPlay;
 	
 	//determines which players won & lost.
 	public static boolean[] totalHierarchy;
 	public static int currentHierarchy;
 	
-	//determines which player's turn it is, & how many players are left in the game.
-	public static ArrayList<Boolean> playerRotation = new ArrayList<Boolean>();
-	//index should correspond with index of the player (will be 0) & the indexes of ai (will be 1 to size - 1)
+	//this index determines whose turn it currently is (0 for player, 1 to aiPlayers size - 1 for ai opponents)
 	public static int playerRotationIndex = 0;
-	//determines which player starts a new round.
+	//this index determines which player starts a new round.
 	public static int startingRotationIndex = 0;
 	
 	//*********************************************************************************************************
@@ -113,12 +106,14 @@ public class ScumMain {
 		if ((playerCount >= 2) && (playerCount <= 13)) {
 			
 			//initialize size of playerRotation here to ensure correct size.
-			playerRotation = new ArrayList<Boolean>(Arrays.asList(new Boolean[playerCount]));
+//			playerRotation = new ArrayList<Boolean>(Arrays.asList(new Boolean[playerCount]));
+//			
+//			for (int i = 1; i <= playerCount; i++) {
+//				//each player is now part of the rotation.
+//				playerRotation.add(true);
+//			}
 			
-			for (int i = 1; i <= playerCount; i++) {
-				playerRotation.add(true);
-			}
-			
+			//all set to false by default.
 			totalHierarchy = new boolean [playerCount];
 		}
 		
@@ -287,6 +282,7 @@ public class ScumMain {
 	 */
 	public static void aiActions(Scanner sc, AI currentOP) {
 		
+		//may have to change this logic again.
 		//if the opponent is not out:
 		if ((currentOP.getOutStatus() == false) && (currentOP.getPassedStatus() == false)) {
 
@@ -314,11 +310,13 @@ public class ScumMain {
 					totalHierarchy[currentHierarchy] = true;
 					currentOP.setHierarchy(currentHierarchy);
 					currentHierarchy++;
+					//this line may cause bugs with the new check change in main.
 					passCount++;
 					currentOP.setPassedStatus(true);
 					
 					//statement may have to change if player rotation indexes change.
-					playerRotation.remove(aiPlayers.indexOf(currentOP));
+					//playerRotation.set(aiPlayers.indexOf(currentOP), false);
+					//playerRotation.remove(aiPlayers.indexOf(currentOP));
 				}
 				
 			}
@@ -349,7 +347,8 @@ public class ScumMain {
 						currentOP.setPassedStatus(true);
 						
 						//statement may have to change if player rotation indexes change.
-						playerRotation.remove(aiPlayers.indexOf(currentOP));
+						//playerRotation.set(aiPlayers.indexOf(currentOP), false);
+						//playerRotation.remove(aiPlayers.indexOf(currentOP));
 					}
 				}
 //				else {
@@ -361,7 +360,7 @@ public class ScumMain {
 //				}
 				
 				//the opponent must pass:
-				//may have to change playerCount to playerRotation size.
+				//playerCount or playerRotation size
 				else if ((passCount < playerCount) && (currentOP.getPassedStatus() == false)) {
 					
 					currentOP.setPassedStatus(true);
@@ -476,20 +475,39 @@ public class ScumMain {
 					if ((playerRotationIndex == 0) && (thePlayer.getPassedStatus() == false)) {
 						showMenuOptions(sc);
 					}
-					//AI Turn/s: [will need to copy this outside of inner loop too.] this could maybe be re-done in aiActions?
+					//Normally player's turn but player has passed:
+					else if ((playerRotationIndex == 0) && (thePlayer.getPassedStatus() == true)) {
+						
+						playerRotationIndex++;
+					}
+					//AI Turn/s: [will need to copy this outside of inner loop too.]
+					//call aiActions Method so that the AI players take their turn.
 					else {
-						//call aiActions Method so that the AI players take their turn.
 						
-							//may have to change this loop when order is determined.
-							for (int i = 0; i < aiPlayers.size(); i++) {
+							//helps determine what order AI opponents go in.
+							//if player starts round:
+							if (startingRotationIndex == 0) {
 								
-								//needs to be changed.
-								AI currentOP = aiPlayers.get(i);
-								
-								aiActions(sc, currentOP);
+								for (int i = 0; i < aiPlayers.size(); i++) {
+									
+									AI currentOP = aiPlayers.get(i);
+									aiActions(sc, currentOP);
+								}
 							}
+							
+							//if player does not start round:
+							else if ((startingRotationIndex > 0) && (playerRotationIndex > 0)) {
+								
+								for (int i = startingRotationIndex; i < playerCount; i++) {
+									
+									//index must be - 1, since rotationIndex is 1 off from aiPlayers list index.
+									AI currentOP = aiPlayers.get(i - 1);
+									aiActions(sc, currentOP);
+								}
+							}
+
 						
-							if (playerRotationIndex >= playerRotation.size()) {
+							if (playerRotationIndex >= playerCount) {
 								
 								playerRotationIndex = 0;
 							}
@@ -498,8 +516,8 @@ public class ScumMain {
 					{
 						//(size - 1) since indexes start at 0.
 						Card topCard = cardStack.get(cardStack.size() - 1);
-						//may have to change playerCount to be the playerRotation size.
-						if ((passCount >= playerCount) || (topCard.getType().equals("Ace"))) {
+						int rotationCount = ((totalHierarchy.length) - (currentHierarchy));
+						if ((passCount >= rotationCount) || (topCard.getType().equals("Ace"))) {
 							newRound();
 						}
 					}
@@ -516,8 +534,6 @@ public class ScumMain {
 				playerHierarchy = currentHierarchy;
 				thePlayer.setHierarchy(playerHierarchy);
 				totalHierarchy[playerHierarchy] = true;
-				
-				playerRotation.remove(playerHierarchy);
 				
 				//*******************************************************************************
 				//TESTS FOR ABOVE STATEMENTS
