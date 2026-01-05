@@ -28,15 +28,6 @@ public class Card {
 	//Randomize Card Values
 	public void assign(String type, String suit, int rank) {
 		
-//		Random randTR = new Random();
-//		int trIndex = randTR.nextInt(ranks.length);
-//		type = types[trIndex];
-//		rank = ranks[trIndex];
-//		
-//		Random randSuit = new Random();
-//		int stIndex = randSuit.nextInt(suits.length);
-//		suit = suits[stIndex];
-		
 		this.type = type;
 		this.suit = suit;
 		this.rank = rank;
