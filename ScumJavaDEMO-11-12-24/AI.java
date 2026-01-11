@@ -35,7 +35,8 @@ public class AI {
 	
 	public void playCard(int cardIndex) {
 
-		System.out.println(name + " has played the card: " + hand.get(cardIndex).toString());
+		System.out.println("\n" + name + " has played the card: " + hand.get(cardIndex).toString());
+		System.out.println("\n" + "\t" + "\t" + "The card: " + hand.get(cardIndex).toString() + " is on the top of the stack.");
 		hand.remove(cardIndex);
 	}
 	

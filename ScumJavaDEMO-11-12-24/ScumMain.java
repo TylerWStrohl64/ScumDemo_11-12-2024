@@ -9,7 +9,7 @@ public class ScumMain {
 	
 	//NOTE: This is a Work-In-Progress build of the project. Code Segments will be changed in later builds.
 	//First   Build Created on: 11-12-2024.
-	//Current Build Created on: 01-04-2026.
+	//Current Build Created on: 01-11-2026.
 	//*******************************************************************************************
 	
 	/*
@@ -33,6 +33,8 @@ public class ScumMain {
 	 * Bugs to fix:
 	 * ------------
 	 * 
+	 * + Passing sometimes results in infinite calls to aiActions() function.
+	 * 
 	 */
 	
 	
@@ -48,8 +50,8 @@ public class ScumMain {
 	
 	public static int playerCount;
 	public static int passCount = 0;
-	//how many cards the current player/ai will play in their turn.
-	public static int numCardsToPlay;
+	//how many cards the current player/ai will play in their turn [not yet implemented].
+	//public static int numCardsToPlay;
 	
 	//determines which players won & lost.
 	public static boolean[] totalHierarchy;
@@ -84,16 +86,6 @@ public class ScumMain {
 				deck.add(aCard);
 			}
 		}
-		
-		//**************************************
-		//TESTING:
-//		System.out.println("TESTING makeCardDeck() FUNCTION");
-//
-//		for (int i = 0; i < 52; i++) {
-//			Card currentCard = deck.get(i);
-//			System.out.println(i + ":" + currentCard.toString());
-//		}
-		//**************************************
 		return deck;
 	}
 	
@@ -104,14 +96,6 @@ public class ScumMain {
 		playerCount = sc.nextInt();
 		
 		if ((playerCount >= 2) && (playerCount <= 13)) {
-			
-			//initialize size of playerRotation here to ensure correct size.
-//			playerRotation = new ArrayList<Boolean>(Arrays.asList(new Boolean[playerCount]));
-//			
-//			for (int i = 1; i <= playerCount; i++) {
-//				//each player is now part of the rotation.
-//				playerRotation.add(true);
-//			}
 			
 			//all set to false by default.
 			totalHierarchy = new boolean [playerCount];
@@ -124,7 +108,7 @@ public class ScumMain {
 	//scanner is passed as parameter to close it in main. program crashes when scanner is declared & closed in this method.
 	public static void showMenuOptions(Scanner menScan) {
 		
-		System.out.println("It is your turn. What would you like to do?");
+		System.out.println("\n" + "It is your turn. What would you like to do?");
 		
 		System.out.println("\t" + "R: Read the Rules.");
 		System.out.println("\t" + "H: Shows your Hand.");
@@ -149,6 +133,19 @@ public class ScumMain {
 		//*************************************************************************************************************************
 		//L: Lay-Down/Play a Card.
 		if (menOp.equals("L")) {
+			
+			//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			
+			//multiple cards (not one on top of the other. must all be the same rank):
+			//do one as normal but then:
+			//"you can also play these cards": ____
+			//^^run a loop to see if any ranks in the hand match, and then show all those cards.
+			//if hand contains card.getRank ?
+			//has to be handled different depending on who starts the round. that determines numCardsToPlay.
+			//it may be the case where every player has to play 3 cards of the same rank or pass.
+			//also have to consider the playerRotation. numCardsToPlay needs to be set for only the first player.
+			
+			//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			
 			//Which Card is Being Played:
 			//*************************************************************************************************************************
@@ -186,8 +183,6 @@ public class ScumMain {
 						
 						//like in the real card game, this would be on the top of the stack of cards.
 						cardStack.push(cardToPush);
-
-						System.out.println("\n" + "\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
 					}
 					//check other rules if stack is not empty:
 					else {
@@ -204,8 +199,6 @@ public class ScumMain {
 							
 							//like in the real card game, this would be on the top of the stack of cards.
 							cardStack.push(cardToPush);
-
-							System.out.println("\n" + "\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
 						}
 						else {
 							System.out.println("Your card/s cannot be played. Choose different card/s |OR| Pass.");
@@ -277,15 +270,20 @@ public class ScumMain {
 	//Determine how each AI Opponent will play the game.
 	/*
 	 * AI can currently:
-	 * 		- Play a card.
+	 * 		- Play a card if first choice is valid.
 	 * 		- Pass their turn in current round.
 	 */
 	public static void aiActions(Scanner sc, AI currentOP) {
 		
-		//may have to change this logic again.
+		//TESTING:
+		//System.out.println("TESTING: aiActions FUNCTION CALLED" + "\t" + "passCount = " + passCount);
+		//[FUNCTION CAN BE INFINITELY CALLED, CAUSED BY A PASSING BUG. CHECK MAIN COND OR THIS COND BELOW.]
+		//***************************************************************
+		
+		//may have to change this logic again. [STUCK HERE?]
 		//if the opponent is not out:
 		if ((currentOP.getOutStatus() == false) && (currentOP.getPassedStatus() == false)) {
-
+			
 			//Determine card before anything else. This ensures we have the correct card in the hand and stack.
 			Random rand = new Random();
 			int cardIndex = rand.nextInt(currentOP.getHand().size());
@@ -294,13 +292,21 @@ public class ScumMain {
 			//play a card if the stack is empty.
 			if (cardStack.size() == 0) {
 				
+				//Delays outputting AI move.
+				try {
+					Thread.sleep(2000);
+				}
+				catch (InterruptedException e) {
+					
+					Thread.currentThread().interrupt();
+					System.out.println("Thread sleep error.");
+				}
+				
 				currentOP.playCard(cardIndex);
 				startingRotationIndex = playerRotationIndex;
 				
 				//like in the real card game, this would be on the top of the stack of cards.
 				cardStack.push(cardToPush);
-				
-				System.out.println("\n" + "\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
 				
 				//fall into nested if statement if the card played is the opponent's last card.
 				if (currentOP.getHand().size() == 0) {
@@ -313,10 +319,6 @@ public class ScumMain {
 					//this line may cause bugs with the new check change in main.
 					passCount++;
 					currentOP.setPassedStatus(true);
-					
-					//statement may have to change if player rotation indexes change.
-					//playerRotation.set(aiPlayers.indexOf(currentOP), false);
-					//playerRotation.remove(aiPlayers.indexOf(currentOP));
 				}
 				
 			}
@@ -324,17 +326,28 @@ public class ScumMain {
 			else {
 				
 				Card topCard = cardStack.get(cardStack.size() - 1);
+				//TESTING:
+				//System.out.println(cardToPush.getRank() + " vs Top: " + topCard.getRank());
+				
 				//the card can only be played if: [The Value is higher than the current stack top.] && [The Num of Cards being played is same].
 				if ((cardToPush.getRank()) > (topCard.getRank())) {
+					
+					//Delays outputting AI move.
+					try {
+						Thread.sleep(2000);
+					}
+					catch (InterruptedException e) {
+						
+						Thread.currentThread().interrupt();
+						System.out.println("Thread sleep error.");
+					}
 					
 					currentOP.playCard(cardIndex);
 					startingRotationIndex = playerRotationIndex;
 					
 					//like in the real card game, this would be on the top of the stack of cards.
 					cardStack.push(cardToPush);
-					
-					System.out.println("\n" + "\t" + "\t" + "The card: " + cardToPush.toString() + " is on the top of the stack.");
-					
+
 					//fall into nested if statement if the card played is the opponent's last card.
 					if (currentOP.getHand().size() == 0) {
 						
@@ -345,19 +358,8 @@ public class ScumMain {
 						currentHierarchy++;
 						passCount++;
 						currentOP.setPassedStatus(true);
-						
-						//statement may have to change if player rotation indexes change.
-						//playerRotation.set(aiPlayers.indexOf(currentOP), false);
-						//playerRotation.remove(aiPlayers.indexOf(currentOP));
 					}
 				}
-//				else {
-//					
-//					currentOP.setPassedStatus(true);
-//					passCount++;
-//					
-//					System.out.println(currentOP.getName() + " has passed.");
-//				}
 				
 				//the opponent must pass:
 				//playerCount or playerRotation size
@@ -482,10 +484,16 @@ public class ScumMain {
 					}
 					//AI Turn/s: [will need to copy this outside of inner loop too.]
 					//call aiActions Method so that the AI players take their turn.
-					else {
+					
+					//does passedStatus need to be considered ?
+					else if (playerRotationIndex > 0) {
+						
+						//may need a "hasRoundStarted" boolean set to true with call to newRound.
+						//then switch that boolean off after first move.
+						//these below may be triggered too much at the wrong times, maybe the 2nd one.
 						
 							//helps determine what order AI opponents go in.
-							//if player starts round:
+							//if player starts round: [change to else if. first if checks for hasRoundStarted]
 							if (startingRotationIndex == 0) {
 								
 								for (int i = 0; i < aiPlayers.size(); i++) {
@@ -496,7 +504,7 @@ public class ScumMain {
 							}
 							
 							//if player does not start round:
-							else if ((startingRotationIndex > 0) && (playerRotationIndex > 0)) {
+							else if (startingRotationIndex > 0) {
 								
 								for (int i = startingRotationIndex; i < playerCount; i++) {
 									
@@ -505,13 +513,13 @@ public class ScumMain {
 									aiActions(sc, currentOP);
 								}
 							}
-
-						
-							if (playerRotationIndex >= playerCount) {
-								
-								playerRotationIndex = 0;
-							}
 					}
+					
+					if (playerRotationIndex >= playerCount) {
+						
+						playerRotationIndex = 0;
+					}
+					
 					if (cardStack.size() != 0)
 					{
 						//(size - 1) since indexes start at 0.
@@ -552,7 +560,6 @@ public class ScumMain {
 		
 		//print results. (show emporer and scum at top, rest below ? or go top to bottom order altogether?)
 		//if the hierarchy is (0) than that is [emperor]. if the hierarchy is (size - 1) then thats [scum].
-			//shouldnt that be reversed ? ^^^
 		
 		sc.close();
 	}

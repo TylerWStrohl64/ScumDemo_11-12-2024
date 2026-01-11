@@ -5,11 +5,11 @@ public class Player {
 	//Variable Declarations:
 	//----------------------
 	
-	ArrayList<Card> hand;
-	boolean outStatus;
-	boolean passStatus;
-	int hierarchy;
-	int numCardsToPlace;
+	private ArrayList<Card> hand;
+	private boolean outStatus;
+	private boolean passStatus;
+	private int hierarchy;
+	//int numCardsToPlace;
 	
 	//Constructor:
 	public Player() {
@@ -40,6 +40,7 @@ public class Player {
 	public void playCard(int cardIndex) {
 
 		System.out.println("\n" + "You have played the card: " + hand.get(cardIndex).toString());
+		System.out.println("\n" + "\t" + "\t" + "The card: " + hand.get(cardIndex).toString() + " is on the top of the stack.");
 		hand.remove(cardIndex);
 	}
 	
